@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小窝群服务器 - 进服教程</title>
+    <style>
+        /* 保留所有原有CSS样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2980, #26d0ce);
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .container {
+            display: flex;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        /* 左侧导航栏 */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(to bottom, #1a2980, #26d0ce);
+            color: white;
+            padding: 30px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo {
+            text-align: center;
+            padding: 0 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .nav-links {
+            list-style: none;
+            padding: 0 20px;
+        }
+        
+        .nav-links li {
+            margin-bottom: 10px;
+        }
+        
+        .nav-links a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .nav-links i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* 主要内容区 */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .header h1 {
+            color: #1a2980;
+            font-size: 28px;
+        }
+        
+        .date {
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .content-card h2 {
+            color: #1a2980;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #26d0ce;
+        }
+        
+        .content-card h3 {
+            color: #1a2980;
+            margin: 20px 0 10px;
+        }
+        
+        .content-card ol, .content-card ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .content-card li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .step-image {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 5px;
+            margin: 15px 0;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-link {
+            display: inline-block;
+            background: #1a2980;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .download-link:hover {
+            background: #26d0ce;
+            transform: translateY(-2px);
+        }
+        
+        .server-address {
+            background: #f0f8ff;
+            border-left: 4px solid #1a2980;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 16px;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 20px;
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .nav-links li {
+                margin: 5px;
+            }
+            
+            .nav-links a {
+                padding: 8px 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .date {
+                margin-top: 10px;
+            }
+        }
+        
+        /* 调试信息样式 */
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景容器 -->
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <!-- 左侧导航栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>小窝群服务器</h1>
+                <p>我的世界 | 方块宝可梦</p>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active" data-page="home"><i>🏠</i> 首页</a></li>
+                <li><a href="#download" class="nav-link" data-page="download"><i>📦</i> 下载地址</a></li>
+                <li><a href="#pc" class="nav-link" data-page="pc"><i>💻</i> 电脑游玩方法</a></li>
+                <li><a href="#mobile" class="nav-link" data-page="mobile"><i>📱</i> 手机游玩方法</a></li>
+                <li><a href="#rules" class="nav-link" data-page="rules"><i>📜</i> 规则须知</a></li>
+            </ul>
+        </aside>
+        
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 首页 -->
+            <div class="page active" id="home">
+                <div class="header">
+                    <h1>小窝群服务器教程站</h1>
+                    <div class="date">2025-08-23</div>
+                </div>
+                
+                <div class="content-card">
+                    <h2>欢迎来到小窝群服务器</h2>
+                    <p>这里为您提供完整的游戏教程和服务器指南。</p>
+                    <p>请使用左侧导航栏查看详细内容：</p>
+                    <ul>
+                        <li><strong>下载地址</strong> - 获取游戏整合包和注册账号</li>
+                        <li><strong>电脑游玩方法</strong> - PC端详细安装和游玩教程</li>
+                        <li><strong>手机游玩方法</strong> - 移动端安装和游玩教程</li>
+                        <li><strong>规则须知</strong> - 服务器规则和注意事项</li>
+                    </ul>
+                </div>
+                
+                <div class="content-card">
+                    <h2>服务器信息</h2>
+                    <div class="server-address">
+                        <strong>服务器地址：</strong> era.mc6.cn:27168
+                    </div>
+                    <p>如果您在游玩过程中遇到任何问题，请联系管理员或腐竹。</p>
+                </div>
+            </div>
+            
+            <!-- 下载地址页面 -->
+            <div class="page" id="download">
+                <div class="header">
+                    <h1>下载地址</h1>
+                    <div class="date">2025-08-23</div>
+                </div>
+                
+                <div class="content-card">
+                    <h2>📦 下载地址</h2>
+                    
+                    <p>请通过以下方式下载游戏整合包：</p>
+                    
+                    <div class="server-address">
+                        <strong>夸克网盘下载地址：</strong> 
+                        <a href="https://example.com/quark" target="_blank">https://example.com/quark</a>
+                    </div>
+                    
+                    <div class="server-address">
+                        <strong>QQ群文件下载：</strong> 
+                        请加入QQ群后在群文件中查找最新整合包
+                    </div>
+                    
+                    <h3>账号注册</h3>
+                    <p>▶ <a href="https://skin.shikongzhijia.top" class="download-link" target="_blank">点击这个链接注册账号</a></p>
+                    <p>注册格式：自己的QQ号+@qq.com（例如：1283927661@qq.com）</p>
+                </div>
+            </div>
+            
+            <!-- 电脑游玩方法页面 -->
+            <div class="page" id="pc">
+                <div class="header">
+                    <h1>电脑游玩方法</h1>
+                    <div class="date">2025-08-23</div>
+                </div>
+                
+                <div class="content-card">
+                    <h2>💻 电脑游玩方法</h2>
+                    
+                    <h3>具体步骤：</h3>
+                    <ol>
+                        <li>从群文件或夸克网盘下载整合包</li>
+                        <li>打开注册链接注册账号（格式：QQ号+@qq.com）</li>
+                        <li>使用注册的QQ号在群内发送"/验证 你的游戏名字"（注意空格）</li>
+                        <li>解压整合包，运行PCL启动器（蓝色图标）</li>
+                        <li>登录注册的账号，启动游戏</li>
+                        <li>在多人游戏中添加服务器地址：<code>era.mc6.cn:27168</code></li>
+                    </ol>
+                    
+                    <p>如遇问题，请联系管理员或腐竹</p>
+                </div>
+            </div>
+            
+            <!-- 手机游玩方法页面 -->
+            <div class="page" id="mobile">
+                <div class="header">
+                    <h1>手机游玩方法</h1>
+                    <div class="date">2025-08-23</div>
+                </div>
+                
+                <div class="content-card">
+                    <h2>📱 手机游玩方法</h2>
+                    
+                    <h3>具体步骤：</h3>
+                    <ol>
+                        <li>从群文件或夸克网盘下载整合包</li>
+                        <li>打开注册链接注册账号（格式：QQ号+@qq.com）</li>
+                        <li>使用注册的QQ号在群内发送"/验证 你的游戏名字"（注意空格）</li>
+                        <li>安装必加模组（从QQ群文件下载）</li>
+                        <li>在游戏设置中添加认证服务器：<code>https://skin.shikongzhijia.top/api/yggdrasil/709502715</code></li>
+                        <li>在离线账户处输入注册的用户名和密码</li>
+                        <li>在多人游戏中添加服务器地址：<code>era.mc6.cn:27168</code></li>
+                    </ol>
+                    
+                    <p>如遇问题，请联系管理员或腐竹</p>
+                </div>
+            </div>
+            
+            <!-- 规则须知页面 -->
+            <div class="page" id="rules">
+                <div class="header">
+                    <h1>规则须知</h1>
+                    <div class="date">2025-08-23</div>
+                </div>
+                
+                <div class="content-card">
+                    <h2>📜 规则须知</h2>
+                    
+                    <h3>服务器基本规则</h3>
+                    <ol>
+                        <li>禁止使用小号，发现小号将大号小号一并封禁</li>
+                        <li>本服为公益服，欢迎邀请朋友一起游玩</li>
+                        <li>严禁任何形式的RMB交易，违者封禁处理</li>
+                        <li>举报RMB交易者可获得对方所有资产</li>
+                        <li>请文明游戏，禁止恶意破坏他人建筑</li>
+                        <li>禁止使用外挂或作弊模组</li>
+                    </ol>
+                </div>
+                
+                <div class="footer">
+                    <p>© 2025 小窝群服务器. 保留所有权利.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 调试信息面板 -->
+    <div class="debug-info" id="debugPanel">
+        JavaScript状态: <span id="jsStatus">加载中...</span>
+    </div>
+
+    <!-- 引入particles.js库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 调试功能：显示JS状态
+        document.getElementById('jsStatus').textContent = '已加载';
+        
+        // 初始化粒子背景
+        try {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: "#1a2980" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.5, random: true },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: "#26d0ce",
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: "none",
+                        random: true,
+                        straight: false,
+                        out_mode: "out",
+                        bounce: false
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "repulse" },
+                        onclick: { enable: true, mode: "push" },
+                        resize: true
+                    }
+                }
+            });
+            console.log('粒子背景初始化成功');
+        } catch (e) {
+            console.error('粒子背景初始化失败:', e);
+            document.getElementById('jsStatus').textContent = '粒子背景错误: ' + e.message;
+        }
+
+        // 页面切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM已加载完成');
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pages = document.querySelectorAll('.page');
+            const mainContent = document.querySelector('.main-content');
+            
+            // 检查元素是否存在
+            if (!navLinks.length || !pages.length || !mainContent) {
+                console.error('无法找到必要的DOM元素');
+                document.getElementById('jsStatus').textContent = 'DOM元素未找到';
+                return;
+            }
+            
+            // 为每个导航链接添加点击事件
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    console.log('点击导航:', pageId);
+                    
+                    // 更新活动导航链接
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 显示对应页面
+                    showPage(pageId);
+                    
+                    // 更新URL哈希
+                    window.location.hash = pageId;
+                });
+            });
+            
+            function showPage(pageId) {
+                console.log('显示页面:', pageId);
+                
+                // 隐藏所有页面
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // 显示指定页面
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    // 添加动画类
+                    targetPage.classList.add('active');
+                    
+                    // 平滑滚动到顶部
+                    mainContent.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    console.error('找不到页面元素:', pageId);
+                }
+            }
+            
+            // 添加URL哈希监听，支持直接访问特定页面
+            window.addEventListener('hashchange', function() {
+                const hash = window.location.hash.substring(1);
+                console.log('哈希变化:', hash);
+                
+                if (hash) {
+                    const targetLink = document.querySelector(`.nav-link[data-page="${hash}"]`);
+                    if (targetLink) {
+                        // 手动触发点击事件
+                        targetLink.click();
+                    } else {
+                        console.error('找不到对应导航链接:', hash);
+                    }
+                }
+            });
+            
+            // 初始页面加载时检查哈希
+            if (window.location.hash) {
+                const hash = window.location.hash.substring(1);
+                console.log('初始哈希:', hash);
+                
+                const targetLink = document.querySelector(`.nav-link[data-page="${hash}"]`);
+                if (targetLink) {
+                    // 手动触发点击事件
+                    targetLink.click();
+                }
+            }
+            
+            // 添加调试信息
+            document.getElementById('jsStatus').textContent = '功能已启用';
+        });
+        
+        // 添加错误处理
+        window.addEventListener('error', function(event) {
+            console.error('全局错误:', event.error);
+            document.getElementById('jsStatus').textContent = '错误: ' + event.message;
+        });
+    </script>
+</body>
+</html>
